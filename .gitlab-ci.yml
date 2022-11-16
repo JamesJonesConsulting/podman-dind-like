@@ -42,7 +42,7 @@ build:prereleases:
     - big-build
   script:
     - export IMAGE_TAG=$(echo -en $CI_COMMIT_REF_NAME | tr -c '[:alnum]_.-' '-')
-    - docker build --pull -t "$CI_REGISTRY_IMAGE:CI_PROJECT_NAME-$IMAGE_TAG" .
+    - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_PROJECT_NAME-$IMAGE_TAG" .
     - docker push "$CI_REGISTRY_IMAGE:$CI_PROJECT_NAME-$IMAGE_TAG"
   only:
     - branches
