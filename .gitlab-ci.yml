@@ -1,0 +1,39 @@
+image: registry.fedoraproject.org/fedora:latest
+
+variables:
+  SOMETHING: else
+
+stages:
+  - build
+  - deploy
+
+services:
+  - docker:dind
+
+before_script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
+build:prereleases:
+  stage: build
+  script:
+    - export IMAGE_TAG=$(echo -en $CI_COMMIT_REF_NAME | tr -c '[:alnum]_.-' '-')
+    - docker build --pull -t "$CI_REGISTRY_IMAGE:CI_PROJECT_NAME-$IMAGE_TAG" .
+    - docker push "$CI_REGISTRY_IMAGE:$CI_PROJECT_NAME-$IMAGE_TAG"
+  only:
+    - branches
+  except:
+    - main
+
+build:releases:
+  stage: build
+  script:
+    - export IMAGE_TAG=$(echo -en $CI_COMMIT_REF_NAME | tr -c '[:alnum]_.-' '-')
+    - docker build --pull -t "$CI_REGISTRY_IMAGE:CI_PROJECT_NAME-$IMAGE_TAG" .
+    - docker push "$CI_REGISTRY_IMAGE:$CI_PROJECT_NAME-$IMAGE_TAG"
+    - docker tag "$CI_REGISTRY_IMAGE:$CI_PROJECT_NAME-$IMAGE_TAG" "$CI_REGISTRY_IMAGE:$CI_PROJECT_NAME-latest"
+    - docker push "$CI_REGISTRY_IMAGE:$CI_PROJECT_NAME-latest"
+  only:
+    - tags
+
+# trigger_build:
+
