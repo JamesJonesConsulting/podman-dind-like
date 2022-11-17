@@ -20,3 +20,35 @@ other self-hosted agents for other CI/CD self-hosted agents
     privileged = true
     network_mode = "host"
 ```
+
+## Setting up Podman socket on build machines for use with muliple flavors of CI/CD agents
+
+Installed podman.socket
+
+```
+sudo dnf install -y podman.socket; sudo systemctl enable --now podman.socket
+```
+
+Created an systemd overlay to use the docker `group` on the socket file
+
+
+aka: Create a file as `/etc/systemd/system/podman.socket.d/overlay.conf` containing:
+
+```
+[Socket]
+SocketMode=0660
+SocketUser=root
+SocketGroup=docker
+```
+
+Created a cat /etc/tmpfiles.d/podman.conf file containing
+
+```
+d /run/podman 0770 root docker
+```
+
+Note: This ensures that the group `docker` has permissions to use this socket.
+
+Finally, add the agent users to the `docker` group (whichever agent you are using).
+
+Run `sudo systemctl reload-daemon` and reboot (quickest way).
