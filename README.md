@@ -9,8 +9,8 @@ and able to use `docker` as a command as well as includes `docker-compose`.
 
 ## Notes
 
-This job runs on a self-hosted gitlab agent with the following in the config.toml so this is also compatible with 
-other self-hosted agents for other CI/CD self-hosted agents 
+This job runs on a self-hosted gitlab agent with the following in the `/etc/gitlab-runner/config.toml` file so this is also compatible with 
+other self-hosted agents for other CI/CD self-hosted agents.
 
 ```
   [runners.docker]
@@ -23,13 +23,13 @@ other self-hosted agents for other CI/CD self-hosted agents
 
 ## Setting up Podman socket on build machines for use with muliple flavors of CI/CD agents
 
-Installed podman.socket
+First, install podman.socket
 
 ```
 sudo dnf install -y podman.socket; sudo systemctl enable --now podman.socket
 ```
 
-Created an systemd overlay to use the docker `group` on the socket file
+Create an systemd overlay to use the docker `group` on the socket file (note: you'll have to create this group yourself separately).
 
 
 aka: Create a file as `/etc/systemd/system/podman.socket.d/overlay.conf` containing:
@@ -41,7 +41,7 @@ SocketUser=root
 SocketGroup=docker
 ```
 
-Created a cat /etc/tmpfiles.d/podman.conf file containing
+Created a tmpfiles.d entry as `/etc/tmpfiles.d/podman.conf` file containing (ensuring that folder will retain the correct permissions after reboots)
 
 ```
 d /run/podman 0770 root docker
