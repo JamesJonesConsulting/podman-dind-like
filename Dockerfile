@@ -1,7 +1,13 @@
 FROM quay.io/podman/stable:latest
 
 # Adding on the docker alias, docker-compose and other useful stuff
-RUN dnf install -y podman-docker buildah skopeo docker-compose
+RUN dnf install -y podman-docker buildah skopeo docker-compose util-linux ansible-core 
+
+# Adding some Ansible Key and Timeout setting
+ENV ANSIBLE_HOST_KEY_CHECKING=False
+ENV ANSIBLE_TIMEOUT=60
+RUN printf "\nStrictHostKeyChecking no\n" >> /etc/ssh/ssh_config
+
 
 # Remove the Emulate Docker CLI using podman messages
 RUN touch /etc/containers/nodocker
