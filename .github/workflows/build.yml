@@ -15,6 +15,12 @@ jobs:
       # Downloads a copy of the code in your repository before running CI tests
       - name: Check out repository code
         uses: actions/checkout@v3
+      # - name: Docker Login
+      #   uses: azure/docker-login@v1
+      #   with:
+      #     login-server: ghcr.io
+      #     username: $GITHUB_ACTOR
+      #     password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build the Docker image
         run: |
           if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
@@ -23,12 +29,13 @@ jobs:
             VERSION=$(echo "${GITHUB_REF_NAME}" | sed 's|/|-|g')
           fi
           podman build . --file Dockerfile --tag podman-dind-like:$VERSION
-          echo $REG_TOKEN | podman login ghcr.io -u jamjon3 --password-stdin
+          echo $REG_TOKEN | podman login ghcr.io -u ${GITHUB_ACTOR} --password-stdin
           podman push "ghcr.io/$IMAGE_NAME:$VERSION"
           if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
             podman tag "ghcr.io/$IMAGE_NAME:$VERSION" "$IMAGE_NAME:latest"
             podman push "ghcr.io/$IMAGE_NAME:latest"
           fi
         env:
-          REG_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
+          REG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # REG_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
           IMAGE_NAME: jamesjonesconsulting/podman-dind-like
