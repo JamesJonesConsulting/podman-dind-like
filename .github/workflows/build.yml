@@ -1,0 +1,26 @@
+name: Build podman-dind-like
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    container:
+      image: registry.fedoraproject.org/fedora:latest
+      options: --userns=keep-id --privileged --user root
+    steps:
+      # Downloads a copy of the code in your repository before running CI tests
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: |
+          if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
+            VERSION=$GITHUB_REF_NAME
+          else
+            VERSION=$(echo "${GITHUB_REF_NAME}" | sed 's|/|-|g')
+          fi
+          docker build . --file Dockerfile --tag podman-dind-like:$VERSION
+    
