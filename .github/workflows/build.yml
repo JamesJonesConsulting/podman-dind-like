@@ -28,7 +28,7 @@ jobs:
           else
             VERSION=$(echo "${GITHUB_REF_NAME}" | sed 's|/|-|g')
           fi
-          podman build . --file Dockerfile --tag podman-dind-like:$VERSION
+          podman build . --file Dockerfile --tag "ghcr.io/$IMAGE_NAME:$VERSION"
           echo $REG_TOKEN | podman login ghcr.io -u ${GITHUB_ACTOR} --password-stdin
           podman push "ghcr.io/$IMAGE_NAME:$VERSION"
           if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
