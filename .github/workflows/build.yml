@@ -1,7 +1,10 @@
 name: Build podman-dind-like
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - release/*
+      - feature/*
+      - develop
   pull_request:
     branches: [ main ]
 
