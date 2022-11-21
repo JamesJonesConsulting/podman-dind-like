@@ -7,9 +7,18 @@ A Docker-in-Docker like container using Podman
 This takes the quay.io/podman/stable image and extends it with some enhancements to make it more docker like
 and able to use `docker` as a command as well as includes `docker-compose`.
 
-## Notes
+## Notes on Github Actions
 
-This job runs on a self-hosted gitlab agent with the following in the `/etc/gitlab-runner/config.toml` file so this is also compatible with 
+This job runs on a self-hosted Github Actions agent and publishes to Github's container registry ghcr.io as a 'public' image and can be downloaded
+via a simple docker command or other means as you see fit.
+
+```
+docker pull ghcr.io/jamesjonesconsulting/podman-dind-like:latest
+```
+
+## Notes on GitLab
+
+This job also runs on a self-hosted gitlab agent with the following in the `/etc/gitlab-runner/config.toml` file so this is also compatible with 
 other self-hosted agents for other CI/CD self-hosted agents.
 
 ```

@@ -3,17 +3,19 @@ name: Build podman-dind-like
 on:
   push:
     branches: 
-      - release/*
-      - feature/*
+      - 'release/**'
+      - 'feature/**'
       - develop
+    tags:
+      - '*'
   pull_request:
     branches: 
       - main
+      - 'release/**'
       - develop
 
 env:
   REGISTRY: ghcr.io
-  # IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
@@ -56,7 +58,6 @@ jobs:
             VERSION=$(echo "${GITHUB_REF_NAME}" | sed 's|/|-|g')
           fi
           podman build . --file Dockerfile --tag "$REGISTRY/$IMAGE_NAME:$VERSION"
-          # echo $REG_TOKEN | podman login ${$REGISTRY} -u ${GITHUB_ACTOR} --password-stdin
           podman push "$REGISTRY/$IMAGE_NAME:$VERSION"
           if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
             podman tag "$REGISTRY/$IMAGE_NAME:$VERSION" "$IMAGE_NAME:latest"
@@ -65,4 +66,3 @@ jobs:
         # env:
         #   REG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         #   # REG_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
-        #   IMAGE_NAME: jamesjonesconsulting/podman-dind-like
