@@ -13,7 +13,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository.lowercase }}
+  # IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
@@ -49,13 +49,14 @@ jobs:
       #     labels: ${{ steps.meta.outputs.labels }}          
       - name: Build the Docker image
         run: |
+          IMAGE_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]') 
           if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
             VERSION=$GITHUB_REF_NAME
           else
             VERSION=$(echo "${GITHUB_REF_NAME}" | sed 's|/|-|g')
           fi
           podman build . --file Dockerfile --tag "$REGISTRY/$IMAGE_NAME:$VERSION"
-          # echo $REG_TOKEN | podman login ghcr.io -u ${GITHUB_ACTOR} --password-stdin
+          # echo $REG_TOKEN | podman login ${$REGISTRY} -u ${GITHUB_ACTOR} --password-stdin
           podman push "$REGISTRY/$IMAGE_NAME:$VERSION"
           if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
             podman tag "$REGISTRY/$IMAGE_NAME:$VERSION" "$IMAGE_NAME:latest"
