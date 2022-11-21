@@ -23,4 +23,11 @@ jobs:
             VERSION=$(echo "${GITHUB_REF_NAME}" | sed 's|/|-|g')
           fi
           podman build . --file Dockerfile --tag podman-dind-like:$VERSION
-    
+          echo $REG_TOKEN | docker login ghcr.io -u jamjon3 --password-stdin
+          podman push ghcr.io/jamesjonesconsulting/podman-dind-like:$VERSION
+          if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
+            podman tag "ghcr.io/jamesjonesconsulting/podman-dind-like:$VERSION" "ghcr.io/jamesjonesconsulting/podman-dind-like:latest"
+            podman push ghcr.io/jamesjonesconsulting/podman-dind-like:latest
+          fi
+        env:
+          REG_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
