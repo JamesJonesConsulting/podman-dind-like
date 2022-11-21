@@ -34,33 +34,34 @@ jobs:
           login-server: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}      
-      - name: Build and push Docker images
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}          
-      # - name: Build the Docker image
-      #   run: |
-      #     if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
-      #       VERSION=$GITHUB_REF_NAME
-      #     else
-      #       VERSION=$(echo "${GITHUB_REF_NAME}" | sed 's|/|-|g')
-      #     fi
-      #     podman build . --file Dockerfile --tag "ghcr.io/$IMAGE_NAME:$VERSION"
-      #     echo $REG_TOKEN | podman login ghcr.io -u ${GITHUB_ACTOR} --password-stdin
-      #     podman push "ghcr.io/$IMAGE_NAME:$VERSION"
-      #     if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
-      #       podman tag "ghcr.io/$IMAGE_NAME:$VERSION" "$IMAGE_NAME:latest"
-      #       podman push "ghcr.io/$IMAGE_NAME:latest"
-      #     fi
-      #   env:
-      #     REG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     # REG_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
-      #     IMAGE_NAME: jamesjonesconsulting/podman-dind-like
+      # This requires docker buildx which podman doesn't support
+      # - name: Extract metadata (tags, labels) for Docker
+      #   id: meta
+      #   uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+      #   with:
+      #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}      
+      # - name: Build and push Docker images
+      #   uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+      #   with:
+      #     context: .
+      #     push: true
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     labels: ${{ steps.meta.outputs.labels }}          
+      - name: Build the Docker image
+        run: |
+          if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
+            VERSION=$GITHUB_REF_NAME
+          else
+            VERSION=$(echo "${GITHUB_REF_NAME}" | sed 's|/|-|g')
+          fi
+          podman build . --file Dockerfile --tag "$REGISTRY/$IMAGE_NAME:$VERSION"
+          # echo $REG_TOKEN | podman login ghcr.io -u ${GITHUB_ACTOR} --password-stdin
+          podman push "$REGISTRY/$IMAGE_NAME:$VERSION"
+          if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
+            podman tag "$REGISTRY/$IMAGE_NAME:$VERSION" "$IMAGE_NAME:latest"
+            podman push "$REGISTRY/$IMAGE_NAME:latest"
+          fi
+        # env:
+        #   REG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #   # REG_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
+        #   IMAGE_NAME: jamesjonesconsulting/podman-dind-like
