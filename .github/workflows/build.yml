@@ -60,7 +60,7 @@ jobs:
           podman build . --file Dockerfile --tag "$REGISTRY/$IMAGE_NAME:$VERSION"
           podman push "$REGISTRY/$IMAGE_NAME:$VERSION"
           if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
-            podman tag "$REGISTRY/$IMAGE_NAME:$VERSION" "$IMAGE_NAME:latest"
+            podman tag "$REGISTRY/$IMAGE_NAME:$VERSION" "$REGISTRY/$IMAGE_NAME:latest"
             podman push "$REGISTRY/$IMAGE_NAME:latest"
           fi
         # env:
