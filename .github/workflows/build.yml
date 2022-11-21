@@ -22,5 +22,5 @@ jobs:
           else
             VERSION=$(echo "${GITHUB_REF_NAME}" | sed 's|/|-|g')
           fi
-          docker build . --file Dockerfile --tag podman-dind-like:$VERSION
+          podman build . --file Dockerfile --tag podman-dind-like:$VERSION
     
