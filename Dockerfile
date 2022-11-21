@@ -2,7 +2,8 @@ FROM quay.io/podman/stable:latest
 
 # Adding on the docker alias, docker-compose and other useful stuff
 RUN dnf install -y podman-docker buildah skopeo docker-compose \
-  util-linux ansible-core openssh-clients krb5-devel krb5-libs krb5-workstation git jq unzip coreutils
+  util-linux ansible-core openssh-clients krb5-devel krb5-libs krb5-workstation git jq unzip coreutils \
+  helm doctl kubernetes-client
 
 # Adding some Ansible Key and Timeout setting
 ENV ANSIBLE_HOST_KEY_CHECKING=False
