@@ -12,6 +12,8 @@ and able to use `docker` as a command as well as includes `docker-compose`.
 This job runs on a self-hosted Github Actions agent and publishes to Github's container registry ghcr.io as a 'public' image and can be downloaded
 via a simple docker command or other means as you see fit.
 
+Note: The `build-push` action doesn't work with 'podman' (commented out in the pipeline) as it tightly coupled with 'buildx' which is only supported with native docker.
+
 ```
 docker pull ghcr.io/jamesjonesconsulting/podman-dind-like:latest
 ```
