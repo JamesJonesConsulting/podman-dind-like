@@ -18,6 +18,12 @@ Note: The `build-push` action doesn't work with 'podman' (commented out in the p
 docker pull ghcr.io/jamesjonesconsulting/podman-dind-like:latest
 ```
 
+### Why is there a second container in the matrix?
+
+The matrix defined in the pipeline pushes the public container (as described above), but also publishes a private container to my instance of Nexus
+Repository for my home lab usage. Having this container 'local' to my home lab saves bandwidth and accellerates my use cases. In addition, it's an
+example of the usage of the 'matrix' feature in a repository I have public so others may benefit from seeing the pattern in use.
+
 ## Notes on GitLab
 
 This job also runs on a self-hosted gitlab agent with the following in the `/etc/gitlab-runner/config.toml` file so this is also compatible with 
