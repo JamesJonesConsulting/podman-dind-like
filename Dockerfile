@@ -3,7 +3,7 @@ FROM quay.io/podman/stable:latest
 # Adding on the docker alias, docker-compose and other useful stuff
 RUN dnf install -y podman-docker buildah skopeo docker-compose \
   util-linux ansible-core openssh-clients krb5-devel krb5-libs krb5-workstation git jq unzip coreutils \
-  helm doctl kubernetes-client gnupg2 pinentry
+  helm doctl kubernetes-client gnupg2 pinentry expect
 
 # Adding the Azure CLI
 RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc \
@@ -21,6 +21,9 @@ RUN dnf install -y rpm-build rpm-sign rubygems ruby-devel gcc gcc-c++ make libff
 
 RUN gem install ffi \
     && gem install fpm
+COPY rpm-sign-expect /usr/bin
+
+RUN chmod +x /usr/bin/rpm-sign-expect
 
 # Remove the Emulate Docker CLI using podman messages
 RUN touch /etc/containers/nodocker
