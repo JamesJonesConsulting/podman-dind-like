@@ -3,30 +3,46 @@ stages:
 
 before_script:
   - dnf install -y podman-docker
-  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  # - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
+.shared_resources:
+  script: &before_login
+    - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" $REGISTRY
+
 
 build:prereleases:
   stage: dind-build
+  parallel:
+    matrix:
+      - REGISTRY_USER: $CI_REGISTRY_USER
+        REGISTRY_PASSWORD: $CI_REGISTRY_PASSWORD
+        REGISTRY: $CI_REGISTRY
+        REGISTRY_IMAGE: $CI_REGISTRY_IMAGE
+      - REGISTRY_USER: $HOME_NEXUS_DOCKER_USER
+        REGISTRY_PASSWORD: $HOME_NEXUS_DOCKER_PASSWORD
+        REGISTRY: $HOME_NEXUS_DOCKER_REGISTRY
+        REGISTRY_IMAGE: $HOME_NEXUS_DOCKER_REGISTRY/$CI_PROJECT_PATH_SLUG
   tags:
     - big-build
   script:
+    - *before_login
     - export IMAGE_TAG=$(echo -en $CI_COMMIT_REF_NAME | sed 's|/|-|g')
-    - docker build --pull -t "$CI_REGISTRY_IMAGE:$IMAGE_TAG" .
-    - docker push "$CI_REGISTRY_IMAGE:$IMAGE_TAG"
+    - docker build --pull -t "$REGISTRY_IMAGE:$IMAGE_TAG" .
+    - docker push "$REGISTRY_IMAGE:$IMAGE_TAG"
   only:
     - branches
   except:
     - main
 
-build:releases:
-  stage: dind-build
-  tags:
-    - big-build
-  script:
-    - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" .
-    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
-    - docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" "$CI_REGISTRY_IMAGE:latest"
-    - docker push "$CI_REGISTRY_IMAGE:latest"
-  only:
-    - tags
+# build:releases:
+#   stage: dind-build
+#   tags:
+#     - big-build
+#   script:
+#     - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" .
+#     - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
+#     - docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" "$CI_REGISTRY_IMAGE:latest"
+#     - docker push "$CI_REGISTRY_IMAGE:latest"
+#   only:
+#     - tags
 
