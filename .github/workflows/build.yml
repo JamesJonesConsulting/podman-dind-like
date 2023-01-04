@@ -23,7 +23,7 @@ jobs:
     runs-on: self-hosted
     container:
       image: quay.io/podman/stable:latest
-      options: --userns=keep-id --privileged --user root
+      options: --userns=keep-id --group-add keep-groups --privileged --user root
     strategy:
       fail-fast: false
       max-parallel: 2
