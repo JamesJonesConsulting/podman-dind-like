@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        registry: [ 'ghcr.io', 'nexus.jamjon3.sytes.net:5443' ]
+        registry: [ 'ghcr.io', 'nexus.jamesjonesconsulting.com:5443' ]
         include:
           - registry: ghcr.io
             user: GITHUB_DOCKER_USER
