@@ -33,7 +33,7 @@ jobs:
           - registry: ghcr.io
             user: GITHUB_DOCKER_USER
             password: GITHUB_TOKEN
-          - registry: nexus.jamjon3.sytes.net:5443
+          - registry: nexus.jamesjonesconsulting.com:5443
             user: NEXUS_DOCKER_USER
             password: HOME_NEXUS_DOCKER_PASSWORD
     steps:
