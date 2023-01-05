@@ -1,19 +1,29 @@
 stages:
   - dind-build
 
-before_script:
-  - dnf install -y podman-docker
-  - docker login -u "$HOME_NEXUS_DOCKER_USER" -p "$HOME_NEXUS_DOCKER_PASSWORD" $HOME_NEXUS_DOCKER_REGISTRY_SHARED
+# before_script:
+#   - dnf install -y podman-docker
+#   - docker login -u "$HOME_NEXUS_DOCKER_USER" -p "$HOME_NEXUS_DOCKER_PASSWORD" $HOME_NEXUS_DOCKER_REGISTRY_SHARED
+
+.base:
+  # See https://gitlab.com/gitlab-org/cluster-integration/cluster-applications/
+  variables:
+    DOCKER_AUTH_CONFIG: ${HOME_NEXUS_DOCKER_AUTH_CONFIG}
+  image: "$HOME_NEXUS_DOCKER_REGISTRY_SHARED/podman/stable:latest"
 
 .shared_resources:
   script: &before_login
     - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" $REGISTRY
+  before_script: &before_auth
+    - dnf install -y podman-docker
+    - docker login -u "$HOME_NEXUS_DOCKER_USER" -p "$HOME_NEXUS_DOCKER_PASSWORD" $HOME_NEXUS_DOCKER_REGISTRY_SHARED
 
 variables:
   DOCKER_AUTH_CONFIG: ${HOME_NEXUS_DOCKER_AUTH_CONFIG}
 
 build:prereleases:
   stage: dind-build
+  extends: .base
   parallel:
     matrix:
       - REGISTRY_USER: $CI_REGISTRY_USER
@@ -23,20 +33,24 @@ build:prereleases:
       - REGISTRY_USER: $HOME_NEXUS_DOCKER_USER
         REGISTRY_PASSWORD: $HOME_NEXUS_DOCKER_PASSWORD
         REGISTRY: $HOME_NEXUS_DOCKER_REGISTRY
-        REGISTRY_IMAGE: $HOME_NEXUS_DOCKER_REGISTRY/$CI_PROJECT_PATH_SLUG
+        REGISTRY_IMAGE: $HOME_NEXUS_DOCKER_REGISTRY/$CI_PROJECT_PATH
   tags:
     - big-build
+  before_script:
+    - *before_auth
   script:
     - *before_login
     - export IMAGE_TAG=$(echo -en $CI_COMMIT_REF_NAME | sed 's|/|-|g')
-    - docker build --pull -t "$REGISTRY_IMAGE:$IMAGE_TAG" --build-arg ARTIFACTORY=$HOME_NEXUS_DOCKER_REGISTRY_SHARED .
-    - docker push "$REGISTRY_IMAGE:$IMAGE_TAG"
+    - export REGISTRY_IMAGE_LOWER=$(echo "$REGISTRY_IMAGE" | tr '[:upper:]' '[:lower:]')
+    - docker build --pull -t "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG" --build-arg ARTIFACTORY=$HOME_NEXUS_DOCKER_REGISTRY_SHARED .
+    - docker push "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG"
   only:
     - branches
   except:
     - main
 
 # build:releases:
+#   extends: .base
 #   stage: dind-build
 #   tags:
 #     - big-build
