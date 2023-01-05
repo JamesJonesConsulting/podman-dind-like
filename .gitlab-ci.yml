@@ -3,12 +3,14 @@ stages:
 
 before_script:
   - dnf install -y podman-docker
-  # - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker login -u "$HOME_NEXUS_DOCKER_USER" -p "$HOME_NEXUS_DOCKER_PASSWORD" $HOME_NEXUS_DOCKER_REGISTRY_SHARED
 
 .shared_resources:
   script: &before_login
     - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" $REGISTRY
 
+variables:
+  DOCKER_AUTH_CONFIG: ${HOME_NEXUS_DOCKER_AUTH_CONFIG}
 
 build:prereleases:
   stage: dind-build
@@ -27,7 +29,7 @@ build:prereleases:
   script:
     - *before_login
     - export IMAGE_TAG=$(echo -en $CI_COMMIT_REF_NAME | sed 's|/|-|g')
-    - docker build --pull -t "$REGISTRY_IMAGE:$IMAGE_TAG" .
+    - docker build --pull -t "$REGISTRY_IMAGE:$IMAGE_TAG" --build-arg ARTIFACTORY=$HOME_NEXUS_DOCKER_REGISTRY_SHARED .
     - docker push "$REGISTRY_IMAGE:$IMAGE_TAG"
   only:
     - branches

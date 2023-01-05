@@ -1,4 +1,5 @@
-FROM quay.io/podman/stable:latest
+ARG ARTIFACTORY
+FROM ${ARTIFACTORY}/podman/stable:latest
 
 # Adding on the docker alias, docker-compose and other useful stuff
 RUN dnf install -y podman-docker buildah skopeo docker-compose \
