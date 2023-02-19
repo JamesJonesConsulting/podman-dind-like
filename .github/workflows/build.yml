@@ -34,13 +34,13 @@ jobs:
           - registry: ghcr.io
             user: GITHUB_DOCKER_USER
             password: GITHUB_TOKEN
-            registry_proxy: NEXUS_PROXY_REGISTRY
+            registry_proxy: ${{ env.NEXUS_PROXY_REGISTRY }}
             proxy_user: NEXUS_DOCKER_USER
             proxy_password: HOME_NEXUS_DOCKER_PASSWORD
           - registry: nexus.jamesjonesconsulting.com:5443
             user: NEXUS_DOCKER_USER
             password: HOME_NEXUS_DOCKER_PASSWORD
-            registry_proxy: NEXUS_PROXY_REGISTRY
+            registry_proxy: ${{ env.NEXUS_PROXY_REGISTRY }}
             proxy_user: NEXUS_DOCKER_USER
             proxy_password: HOME_NEXUS_DOCKER_PASSWORD
     steps:
