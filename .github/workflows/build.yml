@@ -20,7 +20,7 @@ env:
 
 jobs:
   build-and-push:
-    runs-on: self-hosted
+    runs-on: [ self-hosted, big, build ]
     container:
       image: quay.io/podman/stable:latest
       options: --userns=keep-id --group-add keep-groups --privileged --user root
