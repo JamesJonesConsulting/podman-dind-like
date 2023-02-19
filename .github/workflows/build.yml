@@ -23,8 +23,12 @@ jobs:
   build-and-push:
     runs-on: [ self-hosted, big, build ]
     container:
-      image: quay.io/podman/stable:latest
+      image: nexus.jamesjonesconsulting.com:5444/podman/stable:latest
+      # image: quay.io/podman/stable:latest
       options: --userns=keep-id --group-add keep-groups --privileged --user root
+      credentials:
+        username: ${{ secrets.HOME_NEXUS_DOCKER_USER }}
+        password: ${{ secrets.HOME_NEXUS_DOCKER_PASSWORD }}
     strategy:
       fail-fast: false
       max-parallel: 2
