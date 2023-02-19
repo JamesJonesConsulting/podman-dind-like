@@ -25,7 +25,7 @@ jobs:
     container:
       image: nexus.jamesjonesconsulting.com:5444/podman/stable:latest
       # image: quay.io/podman/stable:latest
-      options: --userns=keep-id --group-add keep-groups --privileged --user root --network host
+      options: --userns=keep-id --group-add keep-groups --privileged --user root
       credentials:
         username: ${{ secrets.HOME_NEXUS_DOCKER_USER }}
         password: ${{ secrets.HOME_NEXUS_DOCKER_PASSWORD }}
