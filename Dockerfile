@@ -4,7 +4,7 @@ FROM ${ARTIFACTORY}/podman/stable:latest
 # Adding on the docker alias, docker-compose and other useful stuff
 RUN dnf install -y podman-docker buildah skopeo docker-compose \
   util-linux ansible-core openssh-clients krb5-devel krb5-libs krb5-workstation git jq unzip coreutils \
-  helm doctl kubernetes-client gnupg2 pinentry expect gh
+  helm doctl kubernetes-client gnupg2 pinentry expect gh awscli
 
 # Adding the Azure CLI
 RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc \
