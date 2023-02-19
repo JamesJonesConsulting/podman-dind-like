@@ -21,7 +21,7 @@ env:
 
 jobs:
   build-and-push:
-    runs-on: [ self-hosted, big, build ]
+    runs-on: [ self-hosted, medium, build ]
     container:
       image: nexus.jamesjonesconsulting.com:5444/podman/stable:latest
       # image: quay.io/podman/stable:latest
