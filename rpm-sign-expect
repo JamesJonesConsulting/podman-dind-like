@@ -7,7 +7,7 @@ set name [lindex $argv 3]
 
 ### rpm-sign-expect -- Sign RPMs by sending passphrase and other elements
 
-spawn rpm --define "_gpg_name $name <$email>" --addsign $rpm 
+spawn rpm --define {"_gpg_name $name <$email>"} --addsign $rpm 
 expect -exact "Enter pass phrase: "
 send -- "$passphrase\r"
 expect eof
