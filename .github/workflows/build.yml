@@ -22,6 +22,7 @@ env:
 jobs:
   build-and-push:
     runs-on: [ self-hosted, medium, build ]
+    timeout-minutes: 720
     container:
       image: nexus.jamesjonesconsulting.com:5444/podman/stable:latest
       # image: quay.io/podman/stable:latest
