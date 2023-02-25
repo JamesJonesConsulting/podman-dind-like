@@ -3,7 +3,7 @@ FROM ${ARTIFACTORY}/podman/stable:latest
 
 # Adding on the docker alias, docker-compose and other useful stuff
 RUN dnf install -y podman-docker buildah skopeo docker-compose \
-  util-linux ansible-core openssh-clients krb5-devel krb5-libs krb5-workstation git jq unzip coreutils \
+  util-linux ansible-core openssh-clients krb5-devel krb5-libs krb5-workstation git jq wget curl unzip coreutils \
   helm doctl kubernetes-client gnupg2 pinentry expect gh awscli
 
 # Adding the Azure CLI
@@ -25,6 +25,10 @@ RUN gem install ffi \
 COPY rpm-sign-expect /usr/bin
 
 RUN chmod +x /usr/bin/rpm-sign-expect
+
+# Get the latest version of the unpackage yq utility
+RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq \
+  && chmod +x /usr/bin/yq
 
 # Remove the Emulate Docker CLI using podman messages
 RUN touch /etc/containers/nodocker
