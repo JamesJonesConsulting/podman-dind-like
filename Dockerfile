@@ -11,10 +11,12 @@ RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc \
   && dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm \
   && dnf install -y azure-cli
 
-# Adding some Ansible Key and Timeout setting
+# Adding some Ansible Key and Timeout setting as well as accepting ssh-rsa
 ENV ANSIBLE_HOST_KEY_CHECKING=False
-ENV ANSIBLE_TIMEOUT=60
-RUN printf "\nStrictHostKeyChecking no\n" >> /etc/ssh/ssh_config
+ENV ANSIBLE_TIMEOUT=120
+RUN printf "StrictHostKeyChecking no\n" > /etc/ssh/ssh_config.d/99-ansible.conf
+RUN printf "PubkeyAcceptedKeyTypes +ssh-rsa\n" >> /etc/ssh/ssh_config.d/99-ansible.conf
+RUN printf "HostKeyAlgorithms +ssh-rsa\n" >> /etc/ssh/ssh_config.d/99-ansible.conf
 ENV GPG_TTY /dev/console
 
 # Adding RPM build tools along with FPM
