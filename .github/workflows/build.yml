@@ -89,8 +89,12 @@ jobs:
             VERSION=$(echo "${GITHUB_REF_NAME}" | sed 's|/|-|g')
           fi
           podman build . --file Dockerfile --tag "${{ matrix.registry }}/$IMAGE_NAME:$VERSION" --build-arg ARTIFACTORY=${{ matrix.registry_proxy }}
-          podman push "${{ matrix.registry }}/$IMAGE_NAME:$VERSION"
-          if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
-            podman tag "${{ matrix.registry }}/$IMAGE_NAME:$VERSION" "${{ matrix.registry }}/$IMAGE_NAME:latest"
-            podman push "${{ matrix.registry }}/$IMAGE_NAME:latest"
+          if [[ "$GITHUB_REF" =~ ^refs/pull.* ]]; then
+            echo "Pull requests do not get published. Only for testing"
+          else
+            podman push "${{ matrix.registry }}/$IMAGE_NAME:$VERSION"
+            if [[ "$GITHUB_REF" =~ ^refs/tags.* ]]; then
+              podman tag "${{ matrix.registry }}/$IMAGE_NAME:$VERSION" "${{ matrix.registry }}/$IMAGE_NAME:latest"
+              podman push "${{ matrix.registry }}/$IMAGE_NAME:latest"
+            fi
           fi
