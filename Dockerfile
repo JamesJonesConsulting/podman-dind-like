@@ -1,15 +1,16 @@
 ARG ARTIFACTORY
 FROM ${ARTIFACTORY}/podman/stable:latest
 
-# Adding on the docker alias, docker-compose and other useful stuff
+# Adding on the docker alias, docker-compose and other useful stuff including the Azure CLI and RPM build tools along with FPM
 RUN dnf install -y podman-docker buildah skopeo docker-compose \
   util-linux ansible-core openssh-clients krb5-devel krb5-libs krb5-workstation git jq wget curl unzip coreutils \
-  helm doctl kubernetes-client gnupg2 pinentry expect gh awscli
-
-# Adding the Azure CLI
-RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc \
+  helm doctl kubernetes-client gnupg2 pinentry expect gh awscli \
+  && rpm --import https://packages.microsoft.com/keys/microsoft.asc \
   && dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm \
-  && dnf install -y azure-cli
+  && dnf install -y azure-cli \
+  && dnf install -y rpm-build rpm-sign rubygems ruby-devel gcc gcc-c++ make libffi-devel \
+  && dnf clean all \
+  && rm -rf /var/cache/yum
 
 # Adding some Ansible Key and Timeout setting as well as accepting ssh-rsa
 ENV ANSIBLE_HOST_KEY_CHECKING=False
@@ -19,9 +20,7 @@ RUN printf "PubkeyAcceptedKeyTypes +ssh-rsa\n" >> /etc/ssh/ssh_config.d/99-ansib
 RUN printf "HostKeyAlgorithms +ssh-rsa\n" >> /etc/ssh/ssh_config.d/99-ansible.conf
 ENV GPG_TTY /dev/console
 
-# Adding RPM build tools along with FPM
-RUN dnf install -y rpm-build rpm-sign rubygems ruby-devel gcc gcc-c++ make libffi-devel
-
+# Ensuring the fpm tool is installed to build distro packages such as RPM and DEB
 RUN gem install ffi \
     && gem install fpm
 COPY rpm-sign-expect /usr/bin
