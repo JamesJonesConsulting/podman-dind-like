@@ -6,6 +6,7 @@ stages:
   variables:
     DOCKER_AUTH_CONFIG: ${HOME_NEXUS_DOCKER_AUTH_CONFIG}
   image: "$HOME_NEXUS_DOCKER_REGISTRY_SHARED/podman/stable:latest"
+  timeout: 3h 30m
   parallel:
     matrix:
       - REGISTRY_USER: $CI_REGISTRY_USER
