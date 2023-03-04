@@ -10,26 +10,19 @@ RUN dnf install -y podman-docker buildah skopeo docker-compose \
   && dnf install -y azure-cli \
   && dnf install -y rpm-build rpm-sign rubygems ruby-devel gcc gcc-c++ make libffi-devel \
   && dnf clean all \
-  && rm -rf /var/cache/yum
+  && rm -rf /var/cache/yum \
+  && wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq \
+  && chmod +x /usr/bin/yq \
+  && touch /etc/containers/nodocker
 
 # Adding some Ansible Key and Timeout setting as well as accepting ssh-rsa
-ENV ANSIBLE_HOST_KEY_CHECKING=False
-ENV ANSIBLE_TIMEOUT=120
-RUN printf "StrictHostKeyChecking no\n" > /etc/ssh/ssh_config.d/99-ansible.conf
-RUN printf "PubkeyAcceptedKeyTypes +ssh-rsa\n" >> /etc/ssh/ssh_config.d/99-ansible.conf
-RUN printf "HostKeyAlgorithms +ssh-rsa\n" >> /etc/ssh/ssh_config.d/99-ansible.conf
-ENV GPG_TTY /dev/console
+ENV ANSIBLE_HOST_KEY_CHECKING=False \
+  ANSIBLE_TIMEOUT=120 \
+  GPG_TTY=/dev/console
+COPY ssh_ansible.conf /etc/ssh/ssh_config.d/99-ansible.conf
 
 # Ensuring the fpm tool is installed to build distro packages such as RPM and DEB
-RUN gem install ffi \
-    && gem install fpm
 COPY rpm-sign-expect /usr/bin
-
-RUN chmod +x /usr/bin/rpm-sign-expect
-
-# Get the latest version of the unpackage yq utility
-RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq \
-  && chmod +x /usr/bin/yq
-
-# Remove the Emulate Docker CLI using podman messages
-RUN touch /etc/containers/nodocker
+RUN gem install ffi \
+  && gem install fpm \
+  && chmod +x /usr/bin/rpm-sign-expect
