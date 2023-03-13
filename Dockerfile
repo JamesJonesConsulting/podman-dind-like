@@ -20,6 +20,7 @@ ENV ANSIBLE_HOST_KEY_CHECKING=False \
   ANSIBLE_TIMEOUT=120 \
   GPG_TTY=/dev/console
 COPY ssh_ansible.conf /etc/ssh/ssh_config.d/99-ansible.conf
+RUN chown root:root /etc/ssh/ssh_config.d/99-ansible.conf && chmod 644 /etc/ssh/ssh_config.d/99-ansible.conf
 
 # Ensuring the fpm tool is installed to build distro packages such as RPM and DEB
 COPY rpm-sign-expect /usr/bin
