@@ -2,9 +2,11 @@ ARG ARTIFACTORY
 FROM ${ARTIFACTORY}/podman/stable:latest
 
 # Adding on the docker alias, docker-compose and other useful stuff including the Azure CLI and RPM build tools along with FPM
-RUN dnf install -y podman-docker buildah skopeo docker-compose \
+# docker-compose - broken dependencies in F38 so removing
+RUN dnf install -y podman-docker buildah skopeo \
   util-linux ansible-core openssh-clients krb5-devel krb5-libs krb5-workstation git jq wget curl unzip coreutils \
   helm doctl kubernetes-client gnupg2 pinentry expect gh awscli \
+  python3-jsonpatch python3-requests-oauthlib python3-kubernetes \
   && rpm --import https://packages.microsoft.com/keys/microsoft.asc \
   && dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm \
   && dnf install -y azure-cli \
