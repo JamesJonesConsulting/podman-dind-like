@@ -32,7 +32,8 @@ build:prereleases:
   stage: dind-build
   extends: .base
   tags:
-    - big-build
+    - build
+    - medium
   before_script:
     - *before_auth
   script:
@@ -50,7 +51,8 @@ build:releases:
   extends: .base
   stage: dind-build
   tags:
-    - big-build
+    - build
+    - medium
   before_script:
     - *before_auth
   script:
