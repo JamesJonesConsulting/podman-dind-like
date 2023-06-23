@@ -18,7 +18,7 @@ stages:
         REGISTRY: $HOME_NEXUS_DOCKER_REGISTRY
         REGISTRY_IMAGE: $HOME_NEXUS_DOCKER_REGISTRY/$CI_PROJECT_PATH
   rules:
-    - if: '($CI_PROJECT_URL =~ /gitlab.jamesjonesconsulting.com/) && ($REGISTRY != "$HOME_NEXUS_DOCKER_REGISTRY")'
+    - if: '($CI_PROJECT_URL =~ /*.gitlab\.jamesjonesconsulting\.com.*/) && ($REGISTRY != "$HOME_NEXUS_DOCKER_REGISTRY")'
       when: never
 
 .shared_resources:
