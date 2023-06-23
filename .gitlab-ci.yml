@@ -42,6 +42,8 @@ build:prereleases:
   only:
     refs:
       - branches
+    variables:
+      - '($CI_PROJECT_URL =~ /gitlab\.jamesjonesconsulting\.com/ && $REGISTRY_USER == "$HOME_NEXUS_DOCKER_USER") || CI_PROJECT_URL !~ /gitlab\.jamesjonesconsulting\.com/'
   except:
     refs:
       - main
@@ -61,4 +63,6 @@ build:releases:
   only:
     refs:
       - tags
+    variables:
+      - '($CI_PROJECT_URL =~ /gitlab\.jamesjonesconsulting\.com/ && $REGISTRY_USER == "$HOME_NEXUS_DOCKER_USER") || CI_PROJECT_URL !~ /gitlab\.jamesjonesconsulting\.com/'
 
