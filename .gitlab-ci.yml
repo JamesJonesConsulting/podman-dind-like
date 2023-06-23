@@ -17,9 +17,6 @@ stages:
         REGISTRY_PASSWORD: $HOME_NEXUS_DOCKER_PASSWORD
         REGISTRY: $HOME_NEXUS_DOCKER_REGISTRY
         REGISTRY_IMAGE: $HOME_NEXUS_DOCKER_REGISTRY/$CI_PROJECT_PATH
-  rules:
-    - if: '($CI_PROJECT_URL =~ /*.gitlab\.jamesjonesconsulting\.com.*/) && ($REGISTRY != "$HOME_NEXUS_DOCKER_REGISTRY")'
-      when: never
 
 .shared_resources:
   script: &build_push
@@ -42,10 +39,13 @@ build:prereleases:
     - export IMAGE_TAG=$(echo -en $CI_COMMIT_REF_NAME | sed 's|/|-|g')
     - *build_push
   only:
-    - branches
+    refs:
+      - branches
+    variables:
+      - '($CI_PROJECT_URL =~ /gitlab\.jamesjonesconsulting\.com/) && ($REGISTRY != "$HOME_NEXUS_DOCKER_REGISTRY")'
   except:
-    - main
-
+    refs:
+      - main
 build:releases:
   extends: .base
   stage: dind-build
@@ -59,5 +59,8 @@ build:releases:
     - docker tag "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG" "$REGISTRY_IMAGE_LOWER:latest"
     - docker push "$REGISTRY_IMAGE_LOWER:latest"
   only:
-    - tags
+    refs:
+      - tags
+    variables:
+      - '($CI_PROJECT_URL =~ /gitlab\.jamesjonesconsulting\.com/) && ($REGISTRY != "$HOME_NEXUS_DOCKER_REGISTRY")'
 
