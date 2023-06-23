@@ -5,7 +5,7 @@ stages:
   # See https://gitlab.com/gitlab-org/cluster-integration/cluster-applications/
   variables:
     DOCKER_AUTH_CONFIG: ${HOME_NEXUS_DOCKER_AUTH_CONFIG}
-  image: "$HOME_NEXUS_DOCKER_REGISTRY_SHARED/podman/stable:latest"
+  image: "$HOME_NEXUS_DOCKER_REGISTRY_PROXY/podman/stable:latest"
   timeout: 3h 30m
   parallel:
     matrix:
@@ -22,32 +22,37 @@ stages:
   script: &build_push
     - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" $REGISTRY
     - export REGISTRY_IMAGE_LOWER=$(echo "$REGISTRY_IMAGE" | tr '[:upper:]' '[:lower:]')
-    - docker build --pull -t "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG" --build-arg ARTIFACTORY=$HOME_NEXUS_DOCKER_REGISTRY_SHARED .
+    - docker build --pull -t "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG" --build-arg ARTIFACTORY=$HOME_NEXUS_DOCKER_REGISTRY_PROXY .
     - docker push "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG"
   before_script: &before_auth
     - dnf install -y podman-docker
-    - docker login -u "$HOME_NEXUS_DOCKER_USER" -p "$HOME_NEXUS_DOCKER_PASSWORD" $HOME_NEXUS_DOCKER_REGISTRY_SHARED
+    - docker login -u "$HOME_NEXUS_DOCKER_USER" -p "$HOME_NEXUS_DOCKER_PASSWORD" $HOME_NEXUS_DOCKER_REGISTRY_PROXY
 
 build:prereleases:
   stage: dind-build
   extends: .base
   tags:
-    - big-build
+    - build
+    - medium
   before_script:
     - *before_auth
   script:
     - export IMAGE_TAG=$(echo -en $CI_COMMIT_REF_NAME | sed 's|/|-|g')
     - *build_push
   only:
-    - branches
+    refs:
+      - branches
+    variables:
+      - '($CI_PROJECT_URL =~ /gitlab\.jamesjonesconsulting\.com/ && $REGISTRY_USER == "$HOME_NEXUS_DOCKER_USER") || $CI_PROJECT_URL !~ /gitlab\.jamesjonesconsulting\.com/'
   except:
-    - main
-
+    refs:
+      - main
 build:releases:
   extends: .base
   stage: dind-build
   tags:
-    - big-build
+    - build
+    - medium
   before_script:
     - *before_auth
   script:
@@ -56,5 +61,8 @@ build:releases:
     - docker tag "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG" "$REGISTRY_IMAGE_LOWER:latest"
     - docker push "$REGISTRY_IMAGE_LOWER:latest"
   only:
-    - tags
+    refs:
+      - tags
+    variables:
+      - '($CI_PROJECT_URL =~ /gitlab\.jamesjonesconsulting\.com/ && $REGISTRY_USER == "$HOME_NEXUS_DOCKER_USER") || $CI_PROJECT_URL !~ /gitlab\.jamesjonesconsulting\.com/'
 
