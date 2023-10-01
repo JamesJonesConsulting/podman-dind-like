@@ -29,9 +29,9 @@ RUN chown root:root /etc/ssh/ssh_config.d/99-ansible.conf && chmod 644 /etc/ssh/
 
 # Ensuring the fpm tool is installed to build distro packages such as RPM and DEB
 COPY rpm-sign-expect /usr/bin
-RUN gem sources --add https://nexus.jamesjonesconsulting.com/repository/rubygems-group/ \
-  && gem sources --remove https://rubygems.org/ \
-  && gem sources -c \
-  && gem install ffi \
+RUN curl -k -s -o - \
+  https://nexus.jamesjonesconsulting.com/repository/package-config/rubygems/rubygems-repos.sh |\
+  bash
+RUN gem install ffi \
   && gem install fpm \
   && chmod +x /usr/bin/rpm-sign-expect
