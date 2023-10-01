@@ -17,7 +17,7 @@ RUN dnf install -y podman-docker buildah skopeo \
   && wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq \
   && chmod +x /usr/bin/yq \
   && curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp \
-  && sudo mv /tmp/eksctl /usr/bin \
+  && mv /tmp/eksctl /usr/bin \
   && touch /etc/containers/nodocker
 
 # Adding some Ansible Key and Timeout setting as well as accepting ssh-rsa
@@ -29,6 +29,9 @@ RUN chown root:root /etc/ssh/ssh_config.d/99-ansible.conf && chmod 644 /etc/ssh/
 
 # Ensuring the fpm tool is installed to build distro packages such as RPM and DEB
 COPY rpm-sign-expect /usr/bin
-RUN gem install ffi \
+RUN gem sources --add https://nexus.jamesjonesconsulting.com/repository/rubygems-group/ \
+  && gem sources --remove https://rubygems.org/ \
+  && gem sources -c \
+  && gem install ffi \
   && gem install fpm \
   && chmod +x /usr/bin/rpm-sign-expect
