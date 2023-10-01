@@ -6,7 +6,7 @@ FROM ${ARTIFACTORY}/podman/stable:latest
 RUN dnf install -y podman-docker buildah skopeo \
   util-linux ansible-core openssh-clients krb5-devel krb5-libs krb5-workstation git jq wget curl unzip coreutils \
   helm doctl kubernetes-client gnupg2 pinentry expect gh awscli \
-  python3-jsonpatch python3-requests-oauthlib python3-kubernetes \
+  python3-jsonpatch python3-requests-oauthlib python3-kubernetes python3-pip \
   && rpm --import https://packages.microsoft.com/keys/microsoft.asc \
   && dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm \
   && dnf install -y azure-cli \

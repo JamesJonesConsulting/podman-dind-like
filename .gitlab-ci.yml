@@ -20,13 +20,12 @@ stages:
 
 .shared_resources:
   script: &build_push
-    - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" $REGISTRY
+    - podman login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" $REGISTRY
     - export REGISTRY_IMAGE_LOWER=$(echo "$REGISTRY_IMAGE" | tr '[:upper:]' '[:lower:]')
-    - docker build --pull -t "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG" --build-arg ARTIFACTORY=$HOME_NEXUS_DOCKER_REGISTRY_PROXY .
-    - docker push "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG"
+    - podman build --pull -t "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG" --build-arg ARTIFACTORY=$HOME_NEXUS_DOCKER_REGISTRY_PROXY .
+    - podman push "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG"
   before_script: &before_auth
-    - dnf install -y podman-docker
-    - docker login -u "$HOME_NEXUS_DOCKER_USER" -p "$HOME_NEXUS_DOCKER_PASSWORD" $HOME_NEXUS_DOCKER_REGISTRY_PROXY
+    - podman login -u "$HOME_NEXUS_DOCKER_USER" -p "$HOME_NEXUS_DOCKER_PASSWORD" $HOME_NEXUS_DOCKER_REGISTRY_PROXY
 
 build:prereleases:
   stage: dind-build
@@ -58,8 +57,8 @@ build:releases:
   script:
     - export IMAGE_TAG=$CI_COMMIT_TAG
     - *build_push
-    - docker tag "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG" "$REGISTRY_IMAGE_LOWER:latest"
-    - docker push "$REGISTRY_IMAGE_LOWER:latest"
+    - podman tag "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG" "$REGISTRY_IMAGE_LOWER:latest"
+    - podman push "$REGISTRY_IMAGE_LOWER:latest"
   only:
     refs:
       - tags
