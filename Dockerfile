@@ -35,3 +35,8 @@ RUN curl -k -s -o - \
 RUN gem install ffi \
   && gem install fpm \
   && chmod +x /usr/bin/rpm-sign-expect
+
+# Setting up Pypi to use proxy
+RUN curl -k -s -o - \
+  https://nexus.jamesjonesconsulting.com/repository/package-config/pypi/python3-pypi-repos.sh |\
+  bash
