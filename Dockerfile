@@ -11,6 +11,7 @@ RUN dnf install -y podman-docker buildah skopeo \
   && dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm \
   && dnf install -y azure-cli \
   && dnf install -y rpm-build rpm-sign rubygems ruby-devel gcc gcc-c++ make libffi-devel \
+  && dnf install -y ansible-collection* \
   && dnf clean all \
   && rm -rf /var/cache/yum \
   && wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq \
