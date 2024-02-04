@@ -2,8 +2,8 @@ ARG ARTIFACTORY
 FROM ${ARTIFACTORY}/podman/stable:latest
 
 RUN dnf install -y --nogpgcheck \
-  https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-  https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
+  https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+  https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
   dnf groupupdate core -y
 
 # Adding on the docker alias, docker-compose and other useful stuff including the Azure CLI and RPM build tools along with FPM
