@@ -1,14 +1,25 @@
 ARG ARTIFACTORY
 FROM ${ARTIFACTORY}/podman/stable:latest
 
+RUN dnf install -y --nogpgcheck \
+  https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+  https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
+  dnf groupupdate core -y
+
 # Adding on the docker alias, docker-compose and other useful stuff including the Azure CLI and RPM build tools along with FPM
 # docker-compose - broken dependencies in F38 so removing
 RUN dnf install -y podman-docker buildah skopeo \
   util-linux ansible-core openssh-clients krb5-devel krb5-libs krb5-workstation git jq wget curl unzip coreutils \
   helm doctl kubernetes-client gnupg2 pinentry expect gh awscli \
   python3-jsonpatch python3-requests-oauthlib python3-kubernetes python3-pip \
+  && curl -k -s -o - \
+    https://nexus.jamesjonesconsulting.com/repository/package-config/dist/proxy/rpmfusion/rpmfusion-setup-proxy-repos.sh |\
+    bash \
   && rpm --import https://packages.microsoft.com/keys/microsoft.asc \
   && dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm \
+  && curl -k -s -o - \
+    https://nexus.jamesjonesconsulting.com/repository/package-config/dist/proxy/microsoft/microsoft-setup-yum-proxy-repos.sh |\
+    bash \
   && dnf install -y azure-cli \
   && dnf install -y rpm-build rpm-sign rubygems ruby-devel gcc gcc-c++ make libffi-devel \
   && dnf install -y ansible-collection* \
