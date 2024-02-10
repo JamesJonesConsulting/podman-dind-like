@@ -52,3 +52,7 @@ RUN gem install ffi \
 RUN curl -k -s -o - \
   https://nexus.jamesjonesconsulting.com/repository/package-config/pypi/python3-pypi-repos.sh |\
   bash
+
+# Adding on the CPAN mirror settings for Carton and cpanminus
+ENV PERL_CPANM_OPT="--mirror https://nexus.jamesjonesconsulting.com/repository/cpan-proxy/" \
+    PERL_CARTON_MIRROR=https://nexus.jamesjonesconsulting.com/repository/cpan-proxy/
