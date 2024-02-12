@@ -23,7 +23,7 @@ RUN dnf install -y podman-docker buildah skopeo \
   && dnf install -y azure-cli \
   && dnf install -y rpm-build rpm-sign rubygems ruby-devel gcc gcc-c++ make libffi-devel \
   && dnf install -y ansible-collection* \
-  && dnf install -y cpanminus perl-Mojolicious perl-Test-Mojo perl-Test-Harness perl-Carton \
+  && dnf install -y cpanminus perl-Mojolicious perl-Test-Mojo perl-Test-Harness perl-Perl-Critic perl-Carton \
   && dnf clean all \
   && rm -rf /var/cache/yum \
   && wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq \
