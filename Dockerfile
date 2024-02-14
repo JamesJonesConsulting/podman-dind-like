@@ -1,6 +1,9 @@
 ARG ARTIFACTORY
 FROM ${ARTIFACTORY}/podman/stable:latest
 
+ENV SONAR_SCANNER_VERSION=5.0.1.3006
+ENV SONAR_SCANNER_HOME=/opt/sonar-scanner
+
 RUN dnf install -y --nogpgcheck \
   https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
   https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
@@ -31,6 +34,14 @@ RUN dnf install -y podman-docker buildah skopeo \
   && curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp \
   && mv /tmp/eksctl /usr/bin \
   && touch /etc/containers/nodocker
+
+RUN curl -L -o sonar-scanner.zip \
+  "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}-linux.zip" && \
+  unzip sonar-scanner.zip -d /opt && \
+  rm -f sonar-scanner.zip && \
+  mv /opt/sonar-scanner* "$SONAR_SCANNER_HOME"
+
+ENV PATH=$SONAR_SCANNER_HOME/bin:$PATH
 
 # Adding some Ansible Key and Timeout setting as well as accepting ssh-rsa
 ENV ANSIBLE_HOST_KEY_CHECKING=False \
