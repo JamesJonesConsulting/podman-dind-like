@@ -27,6 +27,8 @@ RUN dnf install -y podman-docker buildah skopeo \
   && dnf install -y rpm-build rpm-sign rubygems ruby-devel gcc gcc-c++ make libffi-devel \
   && dnf install -y ansible-collection* \
   && dnf install -y cpanminus perl-Mojolicious perl-Test-Mojo perl-Test-Harness perl-Perl-Critic perl-Carton \
+  && curl -k -s -o /etc/yum.repos.d/okd.repo https://nexus.jamesjonesconsulting.com/repository/package-config/yum/okd.repo \
+  && dnf install -y okd-client \
   && dnf clean all \
   && rm -rf /var/cache/yum \
   && wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq \
