@@ -64,7 +64,12 @@ RUN gem install ffi \
 # Setting up Pypi to use proxy
 RUN curl -k -s -o - \
   https://nexus.jamesjonesconsulting.com/repository/package-config/pypi/python3-pypi-repos.sh |\
-  bash
+  bash \
+  && mv ~/.config/pip/pip.conf /etc/pip.conf \
+  && chmod 644 /etc/pip.conf \
+  && rm -Rf ~/.config/pip
+
+ENV PIP_CONFIG_FILE=/etc/pip.conf
 
 # Adding on the CPAN mirror settings for Carton and cpanminus
 ENV PERL_CPANM_OPT="--mirror https://nexus.jamesjonesconsulting.com/repository/cpan-proxy/" \
