@@ -14,7 +14,7 @@ RUN dnf install -y --nogpgcheck \
 RUN dnf install -y podman-docker buildah skopeo \
   util-linux ansible-core openssh-clients krb5-devel krb5-libs krb5-workstation git jq wget curl unzip coreutils \
   helm doctl kubernetes-client gnupg2 pinentry expect gh awscli \
-  python3-jsonpatch python3-requests-oauthlib python3-kubernetes python3-pip \
+  python3-jsonpatch python3-requests-oauthlib python3-kubernetes python3-pyyaml python3-pip \
   && curl -k -s -o - \
     https://nexus.jamesjonesconsulting.com/repository/package-config/dist/proxy/rpmfusion/rpmfusion-setup-proxy-repos.sh |\
     bash \
