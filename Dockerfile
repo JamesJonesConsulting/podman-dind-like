@@ -4,6 +4,9 @@ FROM ${ARTIFACTORY}/podman/stable:latest
 ENV SONAR_SCANNER_VERSION=5.0.1.3006
 ENV SONAR_SCANNER_HOME=/opt/sonar-scanner
 
+RUN echo ipv4 >> ~/.curlrc && \
+  echo "inet4_only = on" >> ~/.wgetrc
+
 RUN dnf install -y --nogpgcheck \
   https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
   https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
