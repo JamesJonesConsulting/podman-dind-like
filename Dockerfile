@@ -16,7 +16,7 @@ RUN dnf install -y --nogpgcheck \
 # docker-compose - broken dependencies in F38 so removing
 RUN dnf install -y podman-docker buildah skopeo \
   util-linux ansible-core openssh-clients krb5-devel krb5-libs krb5-workstation git jq wget curl unzip coreutils \
-  samba-client samba-common cifs-utils helm doctl gnupg2 pinentry expect gh awscli \
+  samba-client samba-common cifs-utils helm doctl gnupg2 pinentry expect gh awscli glab \
   python3-jsonpatch python3-requests-oauthlib python3-kubernetes python3-pyyaml python3-pip \
   && curl -k -s -o - \
     https://nexus.jamesjonesconsulting.com/repository/package-config/dist/proxy/rpmfusion/rpmfusion-setup-proxy-repos.sh |\
