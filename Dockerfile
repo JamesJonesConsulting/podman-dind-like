@@ -4,6 +4,9 @@ FROM ${ARTIFACTORY}/podman/stable:latest
 ENV SONAR_SCANNER_VERSION=5.0.1.3006
 ENV SONAR_SCANNER_HOME=/opt/sonar-scanner
 
+RUN echo ipv4 >> ~/.curlrc && \
+  echo "inet4_only = on" >> ~/.wgetrc
+
 RUN dnf install -y --nogpgcheck \
   https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
   https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
@@ -13,7 +16,7 @@ RUN dnf install -y --nogpgcheck \
 # docker-compose - broken dependencies in F38 so removing
 RUN dnf install -y podman-docker buildah skopeo \
   util-linux ansible-core openssh-clients krb5-devel krb5-libs krb5-workstation git jq wget curl unzip coreutils \
-  helm doctl gnupg2 pinentry expect gh awscli \
+  samba-client samba-common cifs-utils helm doctl gnupg2 pinentry expect gh awscli \
   python3-jsonpatch python3-requests-oauthlib python3-kubernetes python3-pyyaml python3-pip \
   && curl -k -s -o - \
     https://nexus.jamesjonesconsulting.com/repository/package-config/dist/proxy/rpmfusion/rpmfusion-setup-proxy-repos.sh |\
