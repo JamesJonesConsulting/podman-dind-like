@@ -16,7 +16,7 @@ RUN dnf install -y --nogpgcheck \
 # docker-compose - broken dependencies in F38 so removing
 RUN dnf install -y podman-docker buildah skopeo \
   util-linux ansible-core openssh-clients krb5-devel krb5-libs krb5-workstation git jq wget curl unzip coreutils \
-  samba-client samba-common cifs-utils helm doctl gnupg2 pinentry expect gh awscli glab \
+  samba-client samba-common cifs-utils helm doctl gnupg2 pinentry expect gh awscli glab yq \
   python3-jsonpatch python3-requests-oauthlib python3-kubernetes python3-pyyaml python3-pip \
   && curl -k -s -o - \
     https://nexus.jamesjonesconsulting.com/repository/package-config/dist/proxy/rpmfusion/rpmfusion-setup-proxy-repos.sh |\
@@ -34,8 +34,6 @@ RUN dnf install -y podman-docker buildah skopeo \
   && dnf install -y okd-client \
   && dnf clean all \
   && rm -rf /var/cache/yum \
-  && wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq \
-  && chmod +x /usr/bin/yq \
   && curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp \
   && mv /tmp/eksctl /usr/bin \
   && touch /etc/containers/nodocker
