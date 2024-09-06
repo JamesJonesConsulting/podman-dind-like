@@ -32,17 +32,13 @@ RUN dnf install -y podman-docker buildah skopeo \
   && dnf install -y cpanminus perl-Mojolicious perl-Test-Mojo perl-Test-Harness perl-Perl-Critic perl-Carton \
   && curl -k -s -o /etc/yum.repos.d/okd.repo https://nexus.jamesjonesconsulting.com/repository/package-config/yum/okd.repo \
   && dnf install -y okd-client \
+  && curl -k -s -o /etc/yum.repos.d/okd.repo https://nexus.jamesjonesconsulting.com/repository/package-config/yum/sonarqube-packages.repo \
+  && dnf install -y sonar-scanner-cli-${SONAR_SCANNER_VERSION} \
   && dnf clean all \
   && rm -rf /var/cache/yum \
   && curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp \
   && mv /tmp/eksctl /usr/bin \
   && touch /etc/containers/nodocker
-
-RUN curl -L -o sonar-scanner.zip \
-  "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}-linux.zip" && \
-  unzip sonar-scanner.zip -d /opt && \
-  rm -f sonar-scanner.zip && \
-  mv /opt/sonar-scanner* "$SONAR_SCANNER_HOME"
 
 ENV PATH=$SONAR_SCANNER_HOME/bin:$PATH
 
