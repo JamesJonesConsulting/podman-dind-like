@@ -10,7 +10,8 @@ RUN echo ipv4 >> ~/.curlrc && \
 RUN dnf install -y --nogpgcheck \
   https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
   https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
-  dnf groupupdate core -y
+  dnf config-manager setopt fedora-cisco-openh264.enabled=1 -y
+  dnf update @core -y
 
 # Adding on the docker alias, docker-compose and other useful stuff including the Azure CLI and RPM build tools along with FPM
 # docker-compose - broken dependencies in F38 so removing
