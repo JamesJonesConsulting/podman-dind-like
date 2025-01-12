@@ -30,9 +30,10 @@ RUN dnf install -y podman-docker buildah skopeo \
   && dnf install -y rpm-build rpm-sign rubygems ruby-devel gcc gcc-c++ make libffi-devel \
   && dnf install -y ansible-collection* \
   && dnf install -y cpanminus perl-Mojolicious perl-Test-Mojo perl-Test-Harness perl-Perl-Critic perl-Carton \
-  && curl -k -s -o /etc/yum.repos.d/okd.repo https://nexus.jamesjonesconsulting.com/repository/package-config/yum/okd.repo \
+  && dnf install -y \
+    $(curl -k -sS -X 'GET' 'https://nexus.jamesjonesconsulting.com/service/rest/v1/search/assets?sort=version&direction=desc&repository=yum-hosted-arch&yum.architecture=noarch&yum.name=jamesjonesconsulting-repos' |\
+    jq '.items[] | .downloadUrl' -r | head -n1) \
   && dnf install -y okd-client \
-  && curl -k -s -o /etc/yum.repos.d/okd.repo https://nexus.jamesjonesconsulting.com/repository/package-config/yum/sonarqube-packages.repo \
   && dnf install -y sonar-scanner-cli-${SONAR_SCANNER_VERSION} \
   && dnf clean all \
   && rm -rf /var/cache/yum \
