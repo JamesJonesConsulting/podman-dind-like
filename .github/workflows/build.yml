@@ -29,8 +29,9 @@ jobs:
       # image: quay.io/podman/stable:latest
       # options: '--user root'
       options: >-
-        --privileged
         --user root
+        --group root
+      # --privileged
       # --group-add keep-groups
       # --userns=keep-id
       # credentials:
