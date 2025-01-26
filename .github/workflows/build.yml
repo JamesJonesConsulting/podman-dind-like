@@ -95,7 +95,7 @@ jobs:
           else
             VERSION=$(echo "${GITHUB_REF_NAME}" | sed 's|/|-|g')
           fi
-          podman build . --privileged --file Dockerfile \
+          podman build . --userns-gid-map-group=1001 --userns-uid-map-user=1001 --file Dockerfile \
             --tag "${{ matrix.registry }}/$IMAGE_NAME:$VERSION" --build-arg ARTIFACTORY=${{ matrix.registry_proxy }}
           if [[ "$GITHUB_REF" =~ ^refs/pull.* ]]; then
             echo "Pull requests do not get published. Only for testing"
