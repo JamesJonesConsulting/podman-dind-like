@@ -33,7 +33,7 @@ RUN dnf install -y podman-docker buildah skopeo \
   && dnf install -y \
     $(curl -k -sS -X 'GET' 'https://nexus.jamesjonesconsulting.com/service/rest/v1/search/assets?sort=version&direction=desc&repository=yum-hosted-arch&yum.architecture=noarch&yum.name=jamesjonesconsulting-repos' |\
     jq '.items[] | .downloadUrl' -r | head -n1) \
-  && dnf install -y okd-client \
+  && dnf install -y okd-client okd-client-helm-plugin operator-sdk \
   && dnf install -y sonar-scanner-cli-${SONAR_SCANNER_VERSION} \
   && dnf clean all \
   && rm -rf /var/cache/yum \
