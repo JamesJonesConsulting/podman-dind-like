@@ -22,7 +22,7 @@ stages:
   script: &build_push
     - podman login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" $REGISTRY
     - export REGISTRY_IMAGE_LOWER=$(echo "$REGISTRY_IMAGE" | tr '[:upper:]' '[:lower:]')
-    - podman build --pull -t "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG" --build-arg ARTIFACTORY=$HOME_NEXUS_DOCKER_REGISTRY_PROXY .
+    - podman build --squash --pull -t "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG" --build-arg ARTIFACTORY=$HOME_NEXUS_DOCKER_REGISTRY_PROXY .
     - podman push "$REGISTRY_IMAGE_LOWER:$IMAGE_TAG"
   before_script: &before_auth
     - podman login -u "$HOME_NEXUS_DOCKER_USER" -p "$HOME_NEXUS_DOCKER_PASSWORD" $HOME_NEXUS_DOCKER_REGISTRY_PROXY
